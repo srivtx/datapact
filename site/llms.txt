@@ -1,0 +1,19 @@
+# datapact
+
+> Lint an ODCS contract and validate a CSV against it, offline.
+
+datapact is an offline data-contract runtime. It parses an Open Data Contract Standard (ODCS) contract in YAML or JSON, lints the contract, and validates a CSV dataset against it. Everything runs locally, in the browser or in CI, with no warehouse connection and no upload.
+
+It reads only the `schema` array and the properties in it; the rest of an ODCS document is accepted and ignored. It reports lint findings (`DP-101`–`DP-109`), validation findings (`DP-201`–`DP-210`), a suppression notice (`DP-250`), and parse errors (`DP-PARSE-000`). Finding output is human-readable text, stable JSON, or SARIF 2.1.0. Exit codes are `0` (no findings at or above `--fail-on`), `1` (findings), `2` (invalid usage or parse error), and `3` (I/O error).
+
+## Docs
+- [Overview](https://srivtx.github.io/datapact/): Why a contract should be checked, not just filed, and what datapact does.
+- [Rules](https://srivtx.github.io/datapact/rules): The lint and validation rule codes, their severities, and the empty-value rule.
+- [Usage](https://srivtx.github.io/datapact/usage): The CLI commands and flags, exit codes, JSON output, and the browser-safe library API.
+- [CI](https://srivtx.github.io/datapact/ci): SARIF 2.1.0 output for GitHub code scanning and an exit-code gate for pull requests.
+- [FAQ](https://srivtx.github.io/datapact/faq): Scope, limitations, and how the runtime treats an ODCS document and a CSV file.
+
+## Optional
+- [Spec](https://github.com/srivtx/datapact/blob/main/spec/SPEC.md): The normative description of the supported ODCS subset, the rules, and the CSV parsing rules.
+- [Source](https://github.com/srivtx/datapact): TypeScript implementation, tests, and issue tracker.
+- [Install script](https://raw.githubusercontent.com/srivtx/datapact/main/install.sh): One-line install of the `datapact` binary.

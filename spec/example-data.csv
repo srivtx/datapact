@@ -1,0 +1,6 @@
+order_id,customer_email,customer_id,status,item_count,unit_price,total,currency,order_date,created_at,updated_at,shipping_address,source_ip,manage_url,metadata,discount_code
+ORD-000101,ada@example.com,8b1e5a7c-2d3f-4a6b-8c9d-0e1f2a3b4c5d,paid,3,12.50,37.50,USD,2026-01-05,2026-01-05T09:12:00Z,2026-01-05T09:12:00Z,"{""zip"":""94107""}",203.0.113.7,https://shop.example.com/orders/ORD-000101,"[1,2,3]",WELCOME10
+ORD-2,ada@example.com,8b1e5a7c-2d3f-4a6b-8c9d-0e1f2a3b4c5d,paid,three,12.50,37.50,USD,2026-01-05,2026-01-05T09:12:00Z,2026-01-05T09:12:00Z,"{""zip"":""94107""}",203.0.113.8,https://shop.example.com/orders/ORD-2,[],WELCOME10
+ORD-000103,not-an-email,8b1e5a7c-2d3f-4a6b-8c9d-0e1f2a3b4c5d,refunded,0,-1.00,-1.00,usd,2026-13-40,not-a-date-time,2026-01-05T09:12:00Z,{},999.1.1.1,https://shop.example.com/orders/ORD-000103,[],
+ORD-000101,,8b1e5a7c-2d3f-4a6b-8c9d-0e1f2a3b4c5d,paid,5000,10.00,50000.00,USD,2026-02-01,2026-02-01T00:00:00Z,2026-02-01T00:00:00Z,{},203.0.113.9,https://shop.example.com/orders/ORD-000101,[],
+ORD-000105,grace@example.com,not-a-uuid,pending,2,5.00,10.00,USD,2026-02-02,2026-02-02T10:00:00Z,2026-02-02T10:00:00Z,,,https://shop.example.com/orders/ORD-000105,,

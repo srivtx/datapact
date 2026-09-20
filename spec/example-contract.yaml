@@ -1,0 +1,88 @@
+# datapact example contract: an `orders` schema that exercises every supported field.
+# Every property below is read by the runtime. Other ODCS fields are accepted and
+# ignored; see ../spec/SPEC.md for the exact subset.
+apiVersion: v3.0.0
+kind: DataContract
+name: orders
+version: 1.0.0
+status: active
+schema:
+  - name: orders
+    properties:
+      - name: order_id
+        logicalType: string
+        required: true
+        unique: true
+        pattern: "^ORD-[0-9]{6}$"
+        description: "Stable order identifier, for example ORD-000101."
+      - name: customer_email
+        logicalType: string
+        required: true
+        format: email
+        description: "Billing email address."
+      - name: customer_id
+        logicalType: string
+        required: true
+        format: uuid
+        description: "Customer identifier, a canonical UUID."
+      - name: status
+        logicalType: string
+        required: true
+        enum: [pending, paid, shipped, cancelled]
+        description: "Order lifecycle state."
+      - name: item_count
+        logicalType: integer
+        required: true
+        minimum: 1
+        maximum: 1000
+        description: "Number of units in the order."
+      - name: unit_price
+        logicalType: number
+        required: true
+        minimum: 0
+        description: "Per-unit price in the order currency."
+      - name: total
+        logicalType: number
+        required: true
+        minimum: 0
+        description: "Order total in the order currency."
+      - name: currency
+        logicalType: string
+        required: true
+        pattern: "^[A-Z]{3}$"
+        description: "ISO 4217 currency code, for example USD."
+      - name: is_gift
+        logicalType: boolean
+        required: true
+        description: "True when the order is a gift."
+      - name: order_date
+        logicalType: date
+        required: true
+        format: date
+        description: "Calendar date the order was placed."
+      - name: created_at
+        logicalType: date-time
+        required: true
+        format: date-time
+        description: "Creation timestamp, ISO 8601 with a zone."
+      - name: updated_at
+        logicalType: timestamp
+        required: true
+        description: "Last modification timestamp."
+      - name: shipping_address
+        logicalType: object
+        description: "Postal address as a JSON object."
+      - name: source_ip
+        logicalType: string
+        format: ipv4
+        description: "Client IPv4 address."
+      - name: manage_url
+        logicalType: string
+        format: uri
+        description: "Customer-facing URL for the order."
+      - name: metadata
+        logicalType: array
+        description: "Free-form JSON array of tags."
+      - name: note
+        logicalType: string
+        description: "Optional human note."

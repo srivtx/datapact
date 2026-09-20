@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FAQ — datapact</title>
+<meta name="description" content="datapact scope and honest limits: no warehouse connection, no referential integrity, no cross-column rules, RFC 4180 CSV, and how it relates to ODCS.">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="FAQ — datapact">
+<meta property="og:description" content="datapact scope, limitations, CSV parsing, and how it relates to Open Data Contract Standard.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://srivtx.github.io/datapact/faq.html">
+<meta property="og:image" content="https://srivtx.github.io/datapact/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="FAQ — datapact">
+<meta name="twitter:description" content="datapact scope, limitations, CSV parsing, and how it relates to Open Data Contract Standard.">
+<meta name="twitter:image" content="https://srivtx.github.io/datapact/assets/og.png">
+<link rel="canonical" href="https://srivtx.github.io/datapact/faq.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ea580c'/%3E%3Cpath d='M9 9h14v17H9z' fill='none' stroke='white' stroke-width='2.2'/%3E%3Cpath d='M12.5 17.5l2.6 2.6 5.4-6' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/lens.css">
+<link rel="stylesheet" href="assets/theme.css">
+<script>
+(function () {
+  try {
+    var stored = window.localStorage.getItem("datapact-theme");
+    if (stored === "dark" || stored === "light") {
+      document.documentElement.setAttribute("data-theme", stored);
+    }
+  } catch (err) {}
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav" id="top">
+  <div class="container nav__inner">
+    <a class="brand" href="index.html" aria-label="datapact home">
+      <span class="brand__mark" aria-hidden="true">
+        <svg class="icon" viewBox="0 0 32 32" focusable="false">
+          <path d="M10 7h12v18H10z"></path>
+          <path d="M13.5 17.5l2.6 2.6 5.4-6"></path>
+        </svg>
+      </span>
+      <span class="brand__name">datapact</span>
+      <span class="brand__tag">offline data-contract runtime</span>
+    </a>
+
+    <nav class="nav__links" id="site-nav" aria-label="Sections">
+      <a href="index.html#studio">Studio</a>
+      <a href="rules.html">Rules</a>
+      <a href="usage.html">Usage</a>
+      <a href="ci.html">CI</a>
+      <a href="https://github.com/srivtx/datapact">GitHub</a>
+    </nav>
+
+    <div class="nav__actions">
+      <button type="button" class="nav__toggle btn btn--ghost btn--sm" id="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+      </button>
+      <button type="button" class="btn btn--ghost btn--sm" id="theme-toggle" aria-pressed="false" aria-label="Switch to dark theme">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+        <span id="theme-toggle-text">Theme</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="container">
+    <div class="docs">
+      <nav class="docs__nav" aria-label="Docs">
+        <h2>datapact</h2>
+        <ul>
+          <li><a href="index.html">Overview</a></li>
+          <li><a href="rules.html">Rules</a></li>
+          <li><a href="usage.html">Usage</a></li>
+          <li><a href="ci.html">CI</a></li>
+          <li><a href="faq.html" aria-current="page">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <article class="docs__body">
+        <div class="docs__head">
+          <p class="eyebrow">Reference</p>
+          <h1>FAQ</h1>
+          <p>Scope, limits, and where datapact sits next to the tools and standards you already use.</p>
+        </div>
+
+        <h2>Questions</h2>
+        <div class="faq">
+          <details>
+            <summary>Does it need a warehouse or a network?</summary>
+            <div class="faq__body"><p>No. datapact reads a contract and a data file from disk or from a string, checks one against the other, and writes a report. There is no connection string, no SQL, no driver, no upload, and no telemetry. It runs the same on a laptop, in a container, or in air-gapped CI.</p></div>
+          </details>
+          <details>
+            <summary>What is an ODCS contract?</summary>
+            <div class="faq__body"><p>A contract in the <strong>Open Data Contract Standard</strong> format: a document that names a dataset and describes its schema and properties. datapact accepts it as YAML or JSON. The <a href="https://github.com/srivtx/datapact/blob/main/spec/SPEC.md">specification</a> in the repository is the normative description of the subset datapact understands.</p></div>
+          </details>
+          <details>
+            <summary>Which parts of an ODCS document does it read?</summary>
+            <div class="faq__body"><p>Two top-level fields, <code>name</code> and <code>schema</code>, and within each schema the <code>properties</code>. Every other ODCS field, such as servers, pricing, SLA, roles, or quality, is accepted and ignored rather than rejected. datapact implements only the part that can be checked from one contract and one data file with no external system.</p></div>
+          </details>
+          <details>
+            <summary>Does it check referential integrity or relationships between datasets?</summary>
+            <div class="faq__body"><p>No. It checks one dataset against one contract. Foreign keys, joins, and relationships between datasets are out of scope, and there is no warehouse connection to resolve them against.</p></div>
+          </details>
+          <details>
+            <summary>Can it express rules across several columns?</summary>
+            <div class="faq__body"><p>No. Each property is checked on its own. There are no expressions over multiple columns and no row-level formulas. A rule like <em>total equals unit_price times item_count</em> is not something datapact can check.</p></div>
+          </details>
+          <details>
+            <summary>How is the CSV parsed?</summary>
+            <div class="faq__body"><p>According to <a href="https://www.rfc-editor.org/rfc/rfc4180">RFC 4180</a>. Files are read as UTF-8 with a leading byte-order mark stripped; fields are comma-separated; records end with CRLF, LF, or a lone CR; quoted fields may contain commas, line breaks, and doubled quotes. The first record is the header, and header names are matched to property names exactly and case-sensitively, independent of column order. Blank lines are skipped, ragged rows are padded or truncated, and no value is inferred — the contract's <code>logicalType</code> decides how a cell is read.</p></div>
+          </details>
+          <details>
+            <summary>Can I suppress a finding?</summary>
+            <div class="faq__body"><p>There is no inline suppression pragma. To keep a report usable, datapact caps validation findings at 50 per rule code per run; when a rule exceeds that, the first 50 are kept and a <code>DP-250</code> notice records how many were suppressed. The cap is applied independently to each validation rule code and never applies to lint findings or parse errors.</p></div>
+          </details>
+          <details>
+            <summary>What do the exit codes mean?</summary>
+            <div class="faq__body"><p><code>0</code> when nothing is at or above <code>--fail-on</code>, <code>1</code> when at least one finding is, <code>2</code> for invalid usage or an input that could not be parsed (<code>DP-PARSE-000</code>), and <code>3</code> for an I/O error. A contract that cannot be read or understood is never reported as clean.</p></div>
+          </details>
+        </div>
+
+        <h2>Limitations</h2>
+        <div class="callout" role="note">
+          <h3>What datapact is not</h3>
+          <p>datapact is a static checker over one contract and one CSV. It is not a warehouse client, it does not resolve relationships between datasets, and it cannot express a rule that spans several columns or rows. It does not profile your data or infer a schema from it, and it is not a full ODCS implementation: only <code>name</code> and <code>schema</code> are read. Everything else in an ODCS document is accepted and ignored. It is not a service, so there is no upload, no account, and no network call at runtime.</p>
+        </div>
+
+        <h2>CSV parsing notes</h2>
+        <div class="deflist">
+          <div class="defrow">
+            <dt class="defrow__term">Encoding</dt>
+            <dd class="defrow__def">UTF-8. A leading byte-order mark is stripped before parsing.</dd>
+          </div>
+          <div class="defrow">
+            <dt class="defrow__term">Records</dt>
+            <dd class="defrow__def">Fields are separated by commas. Records terminate with CRLF, LF, or a lone CR, and a final line break is optional.</dd>
+          </div>
+          <div class="defrow">
+            <dt class="defrow__term">Quoted fields</dt>
+            <dd class="defrow__def">A field may be wrapped in double quotes; inside, a literal quote is written doubled. A quoted field may contain commas, CR, LF, and quotes.</dd>
+          </div>
+          <div class="defrow">
+            <dt class="defrow__term">Header</dt>
+            <dd class="defrow__def">The first record. Names are matched to property names exactly and case-sensitively, in any column order. A repeated header name is ignored after its first occurrence.</dd>
+          </div>
+          <div class="defrow">
+            <dt class="defrow__term">Ragged rows</dt>
+            <dd class="defrow__def">A short row is padded with empty fields; a long row ignores the extra fields. Blank lines are skipped entirely.</dd>
+          </div>
+          <div class="defrow">
+            <dt class="defrow__term">No inference</dt>
+            <dd class="defrow__def">Every field is text first. The contract's <code>logicalType</code> decides how each value is interpreted.</dd>
+          </div>
+        </div>
+
+        <h2>How it relates to ODCS</h2>
+        <div class="deflist">
+          <div class="defrow">
+            <dt class="defrow__term">A subset, by design</dt>
+            <dd class="defrow__def">ODCS is broad and describes servers, pricing, SLA, roles, and quality. datapact deliberately implements only the <code>schema</code> array and its properties, because that is the part that can be enforced from a single contract and a single data file with no external system.</dd>
+          </div>
+          <div class="defrow">
+            <dt class="defrow__term">Accepted, not rejected</dt>
+            <dd class="defrow__def">Any ODCS field outside the subset is read past and ignored. You can point datapact at an existing ODCS document without trimming it first.</dd>
+          </div>
+          <div class="defrow">
+            <dt class="defrow__term">JSON is fine</dt>
+            <dd class="defrow__def">A JSON contract is parsed by the same YAML reader, so both YAML and JSON documents are valid input.</dd>
+          </div>
+          <div class="defrow">
+            <dt class="defrow__term">The specification</dt>
+            <dd class="defrow__def">The exact subset, the rules, the CSV rules, and the output contract are normative in <a href="https://github.com/srivtx/datapact/blob/main/spec/SPEC.md">spec/SPEC.md</a>.</dd>
+          </div>
+        </div>
+
+        <div class="docs__foot">
+          <a href="ci.html">← CI</a>
+          <a href="index.html">Overview →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <span class="brand__mark" aria-hidden="true">
+          <svg class="icon" viewBox="0 0 32 32" focusable="false">
+            <path d="M10 7h12v18H10z"></path>
+            <path d="M13.5 17.5l2.6 2.6 5.4-6"></path>
+          </svg>
+        </span>
+        <div>
+          <p>datapact</p>
+          <p class="muted">Offline data-contract runtime.</p>
+        </div>
+      </div>
+
+      <nav aria-label="Documentation">
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="rules.html">Rules</a></li>
+          <li><a href="usage.html">Usage</a></li>
+          <li><a href="ci.html">CI</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Project">
+        <h2>Project</h2>
+        <ul>
+          <li><a href="https://github.com/srivtx/datapact">Repository</a></li>
+          <li><a href="https://github.com/srivtx/datapact/blob/main/LICENSE">MIT license</a></li>
+          <li><a href="https://github.com/srivtx/datapact/issues">Issues</a></li>
+          <li><a href="https://srivtx.github.io/lenses">Lenses suite</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer__meta">
+      <p>by svx · MIT Licensed · © 2026.</p>
+      <a href="#top">Back to top</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js" defer></script>
+</body>
+</html>

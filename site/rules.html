@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rules — datapact</title>
+<meta name="description" content="Every datapact rule: contract lint (DP-101–DP-109), CSV validation (DP-201–DP-210), suppression (DP-250), and parse errors (DP-PARSE-000).">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Rules — datapact">
+<meta property="og:description" content="The datapact lint and validation rule codes, their severities, logical types, formats, and the empty-value rule.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://srivtx.github.io/datapact/rules.html">
+<meta property="og:image" content="https://srivtx.github.io/datapact/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rules — datapact">
+<meta name="twitter:description" content="The datapact lint and validation rule codes, their severities, logical types, formats, and the empty-value rule.">
+<meta name="twitter:image" content="https://srivtx.github.io/datapact/assets/og.png">
+<link rel="canonical" href="https://srivtx.github.io/datapact/rules.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ea580c'/%3E%3Cpath d='M9 9h14v17H9z' fill='none' stroke='white' stroke-width='2.2'/%3E%3Cpath d='M12.5 17.5l2.6 2.6 5.4-6' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/lens.css">
+<link rel="stylesheet" href="assets/theme.css">
+<script>
+(function () {
+  try {
+    var stored = window.localStorage.getItem("datapact-theme");
+    if (stored === "dark" || stored === "light") {
+      document.documentElement.setAttribute("data-theme", stored);
+    }
+  } catch (err) {}
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav" id="top">
+  <div class="container nav__inner">
+    <a class="brand" href="index.html" aria-label="datapact home">
+      <span class="brand__mark" aria-hidden="true">
+        <svg class="icon" viewBox="0 0 32 32" focusable="false">
+          <path d="M10 7h12v18H10z"></path>
+          <path d="M13.5 17.5l2.6 2.6 5.4-6"></path>
+        </svg>
+      </span>
+      <span class="brand__name">datapact</span>
+      <span class="brand__tag">offline data-contract runtime</span>
+    </a>
+
+    <nav class="nav__links" id="site-nav" aria-label="Sections">
+      <a href="index.html#studio">Studio</a>
+      <a href="rules.html">Rules</a>
+      <a href="usage.html">Usage</a>
+      <a href="ci.html">CI</a>
+      <a href="https://github.com/srivtx/datapact">GitHub</a>
+    </nav>
+
+    <div class="nav__actions">
+      <button type="button" class="nav__toggle btn btn--ghost btn--sm" id="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+      </button>
+      <button type="button" class="btn btn--ghost btn--sm" id="theme-toggle" aria-pressed="false" aria-label="Switch to dark theme">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+        <span id="theme-toggle-text">Theme</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="container">
+    <div class="docs">
+      <nav class="docs__nav" aria-label="Docs">
+        <h2>datapact</h2>
+        <ul>
+          <li><a href="index.html">Overview</a></li>
+          <li><a href="rules.html" aria-current="page">Rules</a></li>
+          <li><a href="usage.html">Usage</a></li>
+          <li><a href="ci.html">CI</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <article class="docs__body">
+        <div class="docs__head">
+          <p class="eyebrow">Reference</p>
+          <h1>The rules</h1>
+          <p>Two families of checks over one contract and one CSV. Linting reads only the contract; validation reads both. Every finding carries a stable code and one of three severities: <code>error</code>, <code>warning</code>, or <code>info</code>.</p>
+        </div>
+
+        <h2>Lint rules (contract)</h2>
+        <p>Linting needs only the contract, and it runs before any data is read. A structurally broken contract is not linted at all; it fails as <code>DP-PARSE-000</code> instead.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Contract checks, DP-101 through DP-109.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Code</th>
+                <th scope="col">Severity</th>
+                <th scope="col">What it catches</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><code>DP-101</code></td><td><span class="chip chip--error">error</span></td><td>A schema entry has no <code>properties</code> array, or a property object lacks a <code>name</code>.</td></tr>
+              <tr><td><code>DP-102</code></td><td><span class="chip chip--error">error</span></td><td>A property name is duplicated within the same schema.</td></tr>
+              <tr><td><code>DP-103</code></td><td><span class="chip chip--error">error</span></td><td>A property has a missing or unknown <code>logicalType</code>.</td></tr>
+              <tr><td><code>DP-104</code></td><td><span class="chip chip--error">error</span></td><td>A <code>pattern</code> is not a valid regular expression.</td></tr>
+              <tr><td><code>DP-105</code></td><td><span class="chip chip--error">error</span></td><td>A <code>minimum</code> or <code>maximum</code> is not a finite number, or <code>minimum</code> is greater than <code>maximum</code>.</td></tr>
+              <tr><td><code>DP-106</code></td><td><span class="chip chip--warning">warning</span></td><td>An <code>enum</code> is present but empty, so it constrains nothing.</td></tr>
+              <tr><td><code>DP-107</code></td><td><span class="chip chip--warning">warning</span></td><td>A <code>format</code> is present but not supported, so no format check runs.</td></tr>
+              <tr><td><code>DP-108</code></td><td><span class="chip chip--warning">warning</span></td><td><code>required</code> or <code>unique</code> is set on an <code>object</code> or <code>array</code> property, whose values are not type-checked.</td></tr>
+              <tr><td><code>DP-109</code></td><td><span class="chip chip--info">info</span></td><td>The contract has no top-level <code>name</code>.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>Validation rules (data)</h2>
+        <p>Validation needs the contract and a CSV dataset, and it runs after linting. Every check that applies to a column runs on each non-empty cell, so one cell can produce more than one finding.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Dataset checks, DP-201 through DP-210.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Code</th>
+                <th scope="col">Severity</th>
+                <th scope="col">What it catches</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><code>DP-201</code></td><td><span class="chip chip--error">error</span></td><td>A <code>required</code> column is absent from the CSV header.</td></tr>
+              <tr><td><code>DP-202</code></td><td><span class="chip chip--info">info</span></td><td>A CSV header column is not declared in the contract.</td></tr>
+              <tr><td><code>DP-203</code></td><td><span class="chip chip--error">error</span></td><td>A value does not parse as the column's logical type.</td></tr>
+              <tr><td><code>DP-204</code></td><td><span class="chip chip--error">error</span></td><td>A value is empty in a <code>required</code> column.</td></tr>
+              <tr><td><code>DP-205</code></td><td><span class="chip chip--error">error</span></td><td>A non-empty value repeats in a <code>unique</code> column.</td></tr>
+              <tr><td><code>DP-206</code></td><td><span class="chip chip--error">error</span></td><td>A numeric value is below <code>minimum</code>.</td></tr>
+              <tr><td><code>DP-207</code></td><td><span class="chip chip--error">error</span></td><td>A numeric value is above <code>maximum</code>.</td></tr>
+              <tr><td><code>DP-208</code></td><td><span class="chip chip--error">error</span></td><td>A value does not match <code>pattern</code>.</td></tr>
+              <tr><td><code>DP-209</code></td><td><span class="chip chip--error">error</span></td><td>A value is not in <code>enum</code>.</td></tr>
+              <tr><td><code>DP-210</code></td><td><span class="chip chip--error">error</span></td><td>A value does not match <code>format</code>.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout" role="note">
+          <p><strong>Uniqueness and bounds.</strong> <code>DP-205</code> compares values as exact, case-sensitive text, so <code>1</code> and <code>1.0</code> are different values and empty fields are never counted as duplicates. <code>DP-206</code> and <code>DP-207</code> fire only when the value parses to a finite number, so a type mismatch on a numeric column does not also produce a bounds finding.</p>
+        </div>
+
+        <h2>Suppression and the cap (DP-250)</h2>
+        <p>A large dataset can produce a finding on millions of cells. To keep a report usable, datapact caps validation findings at <strong>50 per rule code per run</strong>. When a rule would report more, the first 50 are kept, the rest are suppressed, and one notice records how many were dropped. Contract lint findings are not capped.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>The suppression notice.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Code</th>
+                <th scope="col">Severity</th>
+                <th scope="col">What it catches</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><code>DP-250</code></td><td><span class="chip chip--info">info</span></td><td>More than 50 findings of one rule code were produced; the extras were suppressed. One notice is emitted per truncated code, and neither <code>DP-250</code> nor <code>DP-PARSE-000</code> is ever capped.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>Parse errors (DP-PARSE-000)</h2>
+        <div class="table-wrap">
+          <table>
+            <caption>A parse failure is never a clean run.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Code</th>
+                <th scope="col">Severity</th>
+                <th scope="col">What it catches</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><code>DP-PARSE-000</code></td><td><span class="chip chip--error">error</span></td><td>The contract is not valid YAML or JSON, the contract is structurally invalid (the top level is not a mapping, <code>schema</code> is missing or not an array, or a property is not an object or lacks a <code>name</code>), or the CSV has no header row.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>When either the contract or the CSV fails to parse, the run yields a single <code>DP-PARSE-000</code> with location <code>-</code>, always exits <code>2</code>, and is never reported as clean, so a gate cannot pass on input the tool did not understand. JSON is parsed by the same YAML reader, so a JSON contract is valid input.</p>
+
+        <h2>Logical types</h2>
+        <p>A property's <code>logicalType</code> decides how each cell is interpreted. The alias <code>type</code> is accepted for the same field.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>The supported logical types and the values each accepts.</caption>
+            <thead>
+              <tr>
+                <th scope="col">logicalType</th>
+                <th scope="col">Accepted values</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><code>string</code></td><td>Any non-empty UTF-8 text. A string value never produces a type mismatch.</td></tr>
+              <tr><td><code>number</code></td><td>Any text JavaScript <code>Number()</code> parses to a finite value, for example <code>12</code>, <code>-3.5</code>, <code>1e3</code>, or <code>0x10</code>. <code>NaN</code> and <code>Infinity</code> are mismatches.</td></tr>
+              <tr><td><code>integer</code></td><td>A base-10 integer matching <code>^-?\d+$</code>; a leading <code>+</code> is not accepted.</td></tr>
+              <tr><td><code>boolean</code></td><td><code>true</code>, <code>false</code>, <code>yes</code>, <code>no</code>, <code>1</code>, or <code>0</code>, case-insensitive.</td></tr>
+              <tr><td><code>date</code></td><td>A calendar date, exactly <code>YYYY-MM-DD</code>, validated against the real calendar including leap years.</td></tr>
+              <tr><td><code>date-time</code></td><td>Any text JavaScript <code>Date.parse()</code> accepts, such as an ISO 8601 date-time. The parser is permissive, not a strict ISO 8601 grammar.</td></tr>
+              <tr><td><code>timestamp</code></td><td>Any text JavaScript <code>Date.parse()</code> accepts, the same as <code>date-time</code>.</td></tr>
+              <tr><td><code>object</code></td><td>Not type-checked. Any non-empty text is accepted; the value is not parsed as JSON.</td></tr>
+              <tr><td><code>array</code></td><td>Not type-checked. Any non-empty text is accepted; the value is not parsed as JSON.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>A logical type not in this table is <code>DP-103</code>.</p>
+
+        <h2>Formats</h2>
+        <p>A <code>format</code> is checked in addition to the logical type. When a property's format merely repeats its logical type, the format check is skipped because the type check already covers the value.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>The supported formats and the values each accepts.</caption>
+            <thead>
+              <tr>
+                <th scope="col">format</th>
+                <th scope="col">Accepted values</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><code>date</code></td><td>A calendar date, exactly <code>YYYY-MM-DD</code>.</td></tr>
+              <tr><td><code>date-time</code></td><td>A value JavaScript <code>Date.parse()</code> accepts, as the <code>date-time</code> logical type.</td></tr>
+              <tr><td><code>email</code></td><td>A value matching <code>^[^\s@]+@[^\s@]+\.[^\s@]+$</code>: a non-empty local part, an <code>@</code>, and a dotted domain with no whitespace.</td></tr>
+              <tr><td><code>uri</code></td><td>A value the <code>URL</code> constructor accepts, which requires an absolute URL with a scheme and no whitespace.</td></tr>
+              <tr><td><code>uuid</code></td><td>A canonical hyphenated UUID, <code>[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}</code>.</td></tr>
+              <tr><td><code>ipv4</code></td><td>Four groups of one to three decimal digits, each <code>0</code>–<code>255</code>, separated by <code>.</code>. Leading zeros are accepted.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>A format not in this table is <code>DP-107</code>, and no format check runs for that property.</p>
+
+        <h2>The empty-value rule</h2>
+        <p>A field is empty when it has zero length; both an unquoted empty field and a quoted empty field (<code>""</code>) are empty, while a field of only whitespace is not. The rule differs by column:</p>
+        <ul>
+          <li>In a <strong>required</strong> column, an empty field is <code>DP-204</code>, and no further per-cell check runs for that field.</li>
+          <li>In an <strong>optional</strong> column, an empty field is skipped by the type, pattern, enum, format, minimum, maximum, and uniqueness checks. An empty cell in an optional column is never an error.</li>
+        </ul>
+        <p>This is what lets a sparse column validate cleanly: absence is not a type error unless the contract marks the column required.</p>
+
+        <h2>How a run is checked</h2>
+        <p>The pipeline is static and has no warehouse step.</p>
+        <ol class="steps">
+          <li class="step">
+            <h3>Parse</h3>
+            <p>The contract is read as YAML or JSON; the CSV is read per RFC 4180. A failure here becomes a single <code>DP-PARSE-000</code> and exit code <code>2</code>.</p>
+          </li>
+          <li class="step">
+            <h3>Lint</h3>
+            <p>The contract alone is checked for duplicate names, unknown types, bad patterns, invalid bounds, empty enums, and unknown formats.</p>
+          </li>
+          <li class="step">
+            <h3>Validate</h3>
+            <p>Each CSV cell is checked against its property: presence, type, emptiness, uniqueness, bounds, pattern, enum, and format.</p>
+          </li>
+          <li class="step">
+            <h3>Report</h3>
+            <p>Print text or JSON, write SARIF 2.1.0, and exit <code>0</code>, <code>1</code>, <code>2</code>, or <code>3</code> for CI.</p>
+          </li>
+        </ol>
+
+        <h2>Try the lint here</h2>
+        <p>This contract is deliberately broken. Lint it in the browser and watch the contract rules fire.</p>
+        <div class="playground">
+          <div class="playground__body">
+            <label class="field" for="lint-contract-input">ODCS contract (YAML)</label>
+            <textarea id="lint-contract-input" class="input" spellcheck="false">name: orders
+schema:
+  - name: orders
+    properties:
+      - name: order_id
+        logicalType: string
+        required: true
+      - name: order_id
+        logicalType: string
+      - name: status
+        logicalType: enum
+        enum: []
+      - name: score
+        logicalType: integer
+        pattern: "(["
+        minimum: 10
+        maximum: 1
+      - name: meta
+        logicalType: object
+        required: true
+        unique: true</textarea>
+          </div>
+          <div class="playground__actions">
+            <button type="button" class="btn btn--primary" id="lint-run">Lint contract</button>
+            <p id="lint-status" class="status" role="status" aria-live="polite">Nothing linted yet.</p>
+          </div>
+          <div class="playground__results">
+            <div id="lint-error" class="callout" role="alert" hidden>
+              <p id="lint-error-text"></p>
+            </div>
+            <div id="lint-summary-wrap" hidden>
+              <div class="summary" id="lint-summary" aria-label="Finding counts"></div>
+            </div>
+            <pre id="lint-output" class="code code--wrap" hidden><code id="lint-output-code"></code></pre>
+          </div>
+        </div>
+
+        <div class="docs__foot">
+          <a href="index.html">← Overview</a>
+          <a href="usage.html">Usage →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <span class="brand__mark" aria-hidden="true">
+          <svg class="icon" viewBox="0 0 32 32" focusable="false">
+            <path d="M10 7h12v18H10z"></path>
+            <path d="M13.5 17.5l2.6 2.6 5.4-6"></path>
+          </svg>
+        </span>
+        <div>
+          <p>datapact</p>
+          <p class="muted">Offline data-contract runtime.</p>
+        </div>
+      </div>
+
+      <nav aria-label="Documentation">
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="rules.html">Rules</a></li>
+          <li><a href="usage.html">Usage</a></li>
+          <li><a href="ci.html">CI</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Project">
+        <h2>Project</h2>
+        <ul>
+          <li><a href="https://github.com/srivtx/datapact">Repository</a></li>
+          <li><a href="https://github.com/srivtx/datapact/blob/main/LICENSE">MIT license</a></li>
+          <li><a href="https://github.com/srivtx/datapact/issues">Issues</a></li>
+          <li><a href="https://srivtx.github.io/lenses">Lenses suite</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer__meta">
+      <p>by svx · MIT Licensed · © 2026.</p>
+      <a href="#top">Back to top</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/studio.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var api = window.DataPact;
+  var input = document.getElementById("lint-contract-input");
+  var runButton = document.getElementById("lint-run");
+  var status = document.getElementById("lint-status");
+  var errorBox = document.getElementById("lint-error");
+  var errorText = document.getElementById("lint-error-text");
+  var summaryWrap = document.getElementById("lint-summary-wrap");
+  var summary = document.getElementById("lint-summary");
+  var output = document.getElementById("lint-output");
+  var outputCode = document.getElementById("lint-output-code");
+
+  function clear(node) {
+    while (node.firstChild) node.removeChild(node.firstChild);
+  }
+
+  function chip(label, modifier) {
+    var el = document.createElement("span");
+    el.className = modifier ? "chip " + modifier : "chip";
+    el.textContent = label;
+    return el;
+  }
+
+  function showError(message) {
+    errorText.textContent = message;
+    errorBox.hidden = false;
+    status.setAttribute("data-tone", "error");
+    status.textContent = message;
+  }
+
+  function run() {
+    if (!api || typeof api.lintOnly !== "function") {
+      showError("The datapact studio bundle did not load.");
+      return;
+    }
+    var result;
+    try {
+      result = api.lintOnly(input.value, "contract.yaml");
+    } catch (error) {
+      showError("Could not run: " + (error && error.message ? error.message : String(error)));
+      return;
+    }
+
+    var parseCode = api.PARSE_ERROR_CODE ? api.PARSE_ERROR_CODE : "DP-PARSE-000";
+    var isParse = (result.issues || []).some(function (issue) {
+      return issue.code === parseCode;
+    });
+
+    var counts = result.counts || { error: 0, warning: 0, info: 0 };
+    clear(summary);
+    summary.appendChild(chip("errors " + (counts.error || 0), "chip--error"));
+    summary.appendChild(chip("warnings " + (counts.warning || 0), "chip--warning"));
+    summary.appendChild(chip("info " + (counts.info || 0), "chip--info"));
+    summaryWrap.hidden = false;
+
+    outputCode.textContent = api.formatText(result);
+    output.hidden = false;
+
+    if (isParse) {
+      var first = (result.issues || [])[0];
+      showError(first && first.message ? first.message : "The contract could not be parsed.");
+      return;
+    }
+
+    errorBox.hidden = true;
+    status.removeAttribute("data-tone");
+    status.textContent =
+      "contract.yaml: " + (counts.error || 0) + " errors, " +
+      (counts.warning || 0) + " warnings, " + (counts.info || 0) + " info.";
+  }
+
+  if (runButton) runButton.addEventListener("click", run);
+})();
+</script>
+<script src="assets/site.js" defer></script>
+</body>
+</html>

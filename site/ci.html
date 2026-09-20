@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CI — datapact</title>
+<meta name="description" content="Run datapact in CI: SARIF 2.1.0 output for GitHub code scanning and an exit-code gate for pull requests. No warehouse, no network.">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="CI — datapact">
+<meta property="og:description" content="Run datapact in CI: SARIF 2.1.0 output for GitHub code scanning and an exit-code gate for pull requests.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://srivtx.github.io/datapact/ci.html">
+<meta property="og:image" content="https://srivtx.github.io/datapact/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CI — datapact">
+<meta name="twitter:description" content="Run datapact in CI: SARIF 2.1.0 output and an exit-code gate for pull requests.">
+<meta name="twitter:image" content="https://srivtx.github.io/datapact/assets/og.png">
+<link rel="canonical" href="https://srivtx.github.io/datapact/ci.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ea580c'/%3E%3Cpath d='M9 9h14v17H9z' fill='none' stroke='white' stroke-width='2.2'/%3E%3Cpath d='M12.5 17.5l2.6 2.6 5.4-6' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/lens.css">
+<link rel="stylesheet" href="assets/theme.css">
+<script>
+(function () {
+  try {
+    var stored = window.localStorage.getItem("datapact-theme");
+    if (stored === "dark" || stored === "light") {
+      document.documentElement.setAttribute("data-theme", stored);
+    }
+  } catch (err) {}
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav" id="top">
+  <div class="container nav__inner">
+    <a class="brand" href="index.html" aria-label="datapact home">
+      <span class="brand__mark" aria-hidden="true">
+        <svg class="icon" viewBox="0 0 32 32" focusable="false">
+          <path d="M10 7h12v18H10z"></path>
+          <path d="M13.5 17.5l2.6 2.6 5.4-6"></path>
+        </svg>
+      </span>
+      <span class="brand__name">datapact</span>
+      <span class="brand__tag">offline data-contract runtime</span>
+    </a>
+
+    <nav class="nav__links" id="site-nav" aria-label="Sections">
+      <a href="index.html#studio">Studio</a>
+      <a href="rules.html">Rules</a>
+      <a href="usage.html">Usage</a>
+      <a href="ci.html">CI</a>
+      <a href="https://github.com/srivtx/datapact">GitHub</a>
+    </nav>
+
+    <div class="nav__actions">
+      <button type="button" class="nav__toggle btn btn--ghost btn--sm" id="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+      </button>
+      <button type="button" class="btn btn--ghost btn--sm" id="theme-toggle" aria-pressed="false" aria-label="Switch to dark theme">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+        <span id="theme-toggle-text">Theme</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="container">
+    <div class="docs">
+      <nav class="docs__nav" aria-label="Docs">
+        <h2>datapact</h2>
+        <ul>
+          <li><a href="index.html">Overview</a></li>
+          <li><a href="rules.html">Rules</a></li>
+          <li><a href="usage.html">Usage</a></li>
+          <li><a href="ci.html" aria-current="page">CI</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <article class="docs__body">
+        <div class="docs__head">
+          <p class="eyebrow">Guide</p>
+          <h1>CI and code scanning</h1>
+          <p>datapact is built to run in a pipeline: no network, a documented exit code, and SARIF 2.1.0 for GitHub code scanning.</p>
+        </div>
+
+        <h2>Add it to a workflow</h2>
+        <p>Run the check, write a SARIF log, then hand the log to code scanning. The two steps are independent, so the check still fails the job on its own.</p>
+        <pre class="code"><code>name: Data contract
+on: [push, pull_request]
+
+jobs:
+  datapact:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.x
+
+      - name: Check the contract
+        run: bunx github:srivtx/datapact#main check --contract contract.yaml --data data.csv --fail-on warning --sarif datapact.sarif
+
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: datapact.sarif</code></pre>
+
+        <h2>What a SARIF result contains</h2>
+        <p>Each finding becomes one SARIF result:</p>
+        <ul>
+          <li><code>ruleId</code> is the rule code, such as <code>DP-208</code>.</li>
+          <li><code>level</code> is mapped from severity: <code>error</code> to <code>error</code>, <code>warning</code> to <code>warning</code>, and <code>info</code> to <code>note</code>.</li>
+          <li>The physical location points at the data file, so the annotation lands on the pull request.</li>
+          <li><code>properties.severity</code> carries the original severity, and the rule metadata describes each code.</li>
+        </ul>
+        <p>The log is <a href="https://docs.oasis-open.org/sarif/v2.1.0/sarif-v2.1.0.html">SARIF 2.1.0</a>, the format GitHub code scanning understands.</p>
+
+        <h2>Failing the build</h2>
+        <p>Without <code>--sarif</code>, the exit code is the gate. <code>datapact check</code> exits <code>1</code> on any error-severity finding. Add <code>--fail-on warning</code> to fail on warnings too, or <code>--fail-on info</code> to fail on anything. The flag changes only the exit code; the report is the same either way. A contract or CSV that cannot be parsed exits <code>2</code> and is never reported as clean.</p>
+
+        <div class="term" aria-label="A failing CI run">
+          <div class="term__bar">
+            <span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="term__title">ci</span>
+          </div>
+          <pre class="term__body term__body--wrap"><span class="ln"><span class="p">$ </span><span class="cmd">datapact check --contract contract.yaml --data data.csv --fail-on warning</span></span><span class="ln"><span class="dim">data.csv  rows:5  errors:16  warnings:0  info:1</span></span><span class="ln"><span class="info">INFO</span><span class="dim">   DP-202  discount_code  column "discount_code" is not declared in the contract</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-208  orders.order_id  row 2: value "ORD-2" does not match pattern ^ORD-[0-9]{6}$</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-205  orders.order_id  row 4: duplicate value "ORD-000101" in unique column "order_id"</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-201  orders.is_gift  required column "is_gift" is missing from the dataset</span></span><span class="ln"><span class="dim">… 13 more findings.</span></span><span class="ln"><span class="dim">exit </span><span class="err">1</span></span></pre>
+        </div>
+
+        <div class="docs__foot">
+          <a href="usage.html">← Usage</a>
+          <a href="faq.html">FAQ →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <span class="brand__mark" aria-hidden="true">
+          <svg class="icon" viewBox="0 0 32 32" focusable="false">
+            <path d="M10 7h12v18H10z"></path>
+            <path d="M13.5 17.5l2.6 2.6 5.4-6"></path>
+          </svg>
+        </span>
+        <div>
+          <p>datapact</p>
+          <p class="muted">Offline data-contract runtime.</p>
+        </div>
+      </div>
+
+      <nav aria-label="Documentation">
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="rules.html">Rules</a></li>
+          <li><a href="usage.html">Usage</a></li>
+          <li><a href="ci.html">CI</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Project">
+        <h2>Project</h2>
+        <ul>
+          <li><a href="https://github.com/srivtx/datapact">Repository</a></li>
+          <li><a href="https://github.com/srivtx/datapact/blob/main/LICENSE">MIT license</a></li>
+          <li><a href="https://github.com/srivtx/datapact/issues">Issues</a></li>
+          <li><a href="https://srivtx.github.io/lenses">Lenses suite</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer__meta">
+      <p>by svx · MIT Licensed · © 2026.</p>
+      <a href="#top">Back to top</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js" defer></script>
+</body>
+</html>

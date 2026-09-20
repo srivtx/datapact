@@ -1,0 +1,4 @@
+/* datapact — per-tool accent. Only the accent changes here; the rest is lens.css. */
+:root { --accent: #ea580c; --accent-ink: #ffffff; }
+[data-theme="dark"] { --accent: #fb923c; --accent-ink: #0a0a0a; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --accent: #fb923c; --accent-ink: #0a0a0a; } }

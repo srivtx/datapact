@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Usage — datapact</title>
+<meta name="description" content="datapact CLI commands and flags, exit codes, JSON and SARIF output, the browser-safe library API, and the MCP server.">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Usage — datapact">
+<meta property="og:description" content="datapact CLI commands and flags, exit codes, JSON and SARIF output, the library API, and the MCP server.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://srivtx.github.io/datapact/usage.html">
+<meta property="og:image" content="https://srivtx.github.io/datapact/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Usage — datapact">
+<meta name="twitter:description" content="datapact CLI commands and flags, exit codes, JSON and SARIF output, the library API, and the MCP server.">
+<meta name="twitter:image" content="https://srivtx.github.io/datapact/assets/og.png">
+<link rel="canonical" href="https://srivtx.github.io/datapact/usage.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ea580c'/%3E%3Cpath d='M9 9h14v17H9z' fill='none' stroke='white' stroke-width='2.2'/%3E%3Cpath d='M12.5 17.5l2.6 2.6 5.4-6' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/lens.css">
+<link rel="stylesheet" href="assets/theme.css">
+<script>
+(function () {
+  try {
+    var stored = window.localStorage.getItem("datapact-theme");
+    if (stored === "dark" || stored === "light") {
+      document.documentElement.setAttribute("data-theme", stored);
+    }
+  } catch (err) {}
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav" id="top">
+  <div class="container nav__inner">
+    <a class="brand" href="index.html" aria-label="datapact home">
+      <span class="brand__mark" aria-hidden="true">
+        <svg class="icon" viewBox="0 0 32 32" focusable="false">
+          <path d="M10 7h12v18H10z"></path>
+          <path d="M13.5 17.5l2.6 2.6 5.4-6"></path>
+        </svg>
+      </span>
+      <span class="brand__name">datapact</span>
+      <span class="brand__tag">offline data-contract runtime</span>
+    </a>
+
+    <nav class="nav__links" id="site-nav" aria-label="Sections">
+      <a href="index.html#studio">Studio</a>
+      <a href="rules.html">Rules</a>
+      <a href="usage.html">Usage</a>
+      <a href="ci.html">CI</a>
+      <a href="https://github.com/srivtx/datapact">GitHub</a>
+    </nav>
+
+    <div class="nav__actions">
+      <button type="button" class="nav__toggle btn btn--ghost btn--sm" id="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+      </button>
+      <button type="button" class="btn btn--ghost btn--sm" id="theme-toggle" aria-pressed="false" aria-label="Switch to dark theme">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+        <span id="theme-toggle-text">Theme</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="container">
+    <div class="docs">
+      <nav class="docs__nav" aria-label="Docs">
+        <h2>datapact</h2>
+        <ul>
+          <li><a href="index.html">Overview</a></li>
+          <li><a href="rules.html">Rules</a></li>
+          <li><a href="usage.html" aria-current="page">Usage</a></li>
+          <li><a href="ci.html">CI</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <article class="docs__body">
+        <div class="docs__head">
+          <p class="eyebrow">Reference</p>
+          <h1>Usage</h1>
+          <p>The same runtime runs from the command line, from TypeScript, and from an MCP-capable agent. Every surface takes text and returns the same findings object.</p>
+        </div>
+
+        <h2>Install</h2>
+        <div class="term" aria-label="Install commands">
+          <div class="term__bar">
+            <span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="term__title">install</span>
+          </div>
+          <pre class="term__body term__body--wrap"><span class="ln"><span class="dim"># one-line install (installs the `datapact` binary)</span></span><span class="ln"><span class="p">$ </span><span class="cmd">curl -fsSL https://raw.githubusercontent.com/srivtx/datapact/main/install.sh | sh</span></span><span class="ln"></span><span class="ln"><span class="dim"># run once, without installing</span></span><span class="ln"><span class="p">$ </span><span class="cmd">bunx github:srivtx/datapact#main --help</span></span><span class="ln"></span><span class="ln"><span class="dim"># install globally</span></span><span class="ln"><span class="p">$ </span><span class="cmd">bun add -g github:srivtx/datapact</span></span><span class="ln"></span><span class="ln"><span class="dim"># add as a project dev dependency</span></span><span class="ln"><span class="p">$ </span><span class="cmd">bun add -d github:srivtx/datapact</span></span></pre>
+        </div>
+        <p>datapact is not published to npm, and it requires <a href="https://bun.sh">Bun</a>. The install script drops a <code>datapact</code> binary on your <code>PATH</code>; <code>bunx</code> runs it straight from GitHub.</p>
+
+        <h2>Commands</h2>
+        <div class="table-wrap">
+          <table>
+            <caption>The three commands.</caption>
+            <thead>
+              <tr><th scope="col">Command</th><th scope="col">Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>datapact check --contract &lt;file&gt; --data &lt;csv&gt;</code></td><td>Lint the contract and validate the dataset against it. The combined findings are reported.</td></tr>
+              <tr><td><code>datapact lint --contract &lt;file&gt;</code></td><td>Lint the contract on its own. No data is read.</td></tr>
+              <tr><td><code>datapact mcp</code></td><td>Run the MCP server over stdio, exposing <code>contract_lint</code> and <code>contract_check</code>.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>Flags</h2>
+        <div class="table-wrap">
+          <table>
+            <caption>Every flag datapact accepts. A value flag takes both <code>--flag value</code> and <code>--flag=value</code>.</caption>
+            <thead>
+              <tr><th scope="col">Flag</th><th scope="col">Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>--contract &lt;path&gt;</code></td><td>The ODCS contract to read, as YAML or JSON.</td></tr>
+              <tr><td><code>--data &lt;path&gt;</code></td><td>The CSV dataset to validate. Required for <code>check</code>.</td></tr>
+              <tr><td><code>--json</code></td><td>Print a machine-readable JSON document to stdout.</td></tr>
+              <tr><td><code>--quiet</code>, <code>-q</code></td><td>Print a single summary line instead of the full report.</td></tr>
+              <tr><td><code>--sarif &lt;path&gt;</code></td><td>Write a SARIF 2.1.0 report to <code>&lt;path&gt;</code>.</td></tr>
+              <tr><td><code>--fail-on &lt;level&gt;</code></td><td><code>error</code> (default), <code>warning</code>, <code>info</code>, or <code>none</code> — the exit-code threshold.</td></tr>
+              <tr><td><code>-h</code>, <code>--help</code> / <code>-v</code>, <code>--version</code></td><td>Print help or the version and exit.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><code>--fail-on</code> affects only the exit code. Every finding is still reported and included in JSON and SARIF output.</p>
+
+        <h2>Examples</h2>
+        <div class="term" aria-label="Example commands">
+          <div class="term__bar">
+            <span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="term__title">examples</span>
+          </div>
+          <pre class="term__body term__body--wrap"><span class="ln"><span class="dim"># lint a contract on its own</span></span><span class="ln"><span class="p">$ </span><span class="cmd">datapact lint --contract spec/example-contract.yaml</span></span><span class="ln"><span class="dim">contract.yaml  rows:0  errors:0  warnings:0  info:0</span></span><span class="ln"></span><span class="ln"><span class="dim"># lint and validate together</span></span><span class="ln"><span class="p">$ </span><span class="cmd">datapact check --contract spec/example-contract.yaml --data spec/example-data.csv</span></span><span class="ln"></span><span class="ln"><span class="dim"># machine-readable output for a program</span></span><span class="ln"><span class="p">$ </span><span class="cmd">datapact check --contract contract.yaml --data orders.csv --json</span></span><span class="ln"></span><span class="ln"><span class="dim"># write SARIF and fail CI on warnings too</span></span><span class="ln"><span class="p">$ </span><span class="cmd">datapact check --contract contract.yaml --data orders.csv --sarif datapact.sarif --fail-on warning</span></span></pre>
+        </div>
+
+        <h2>A full check</h2>
+        <p>Text output is line-oriented: a summary header, then one finding per line with its severity, code, location, and message.</p>
+        <div class="term" aria-label="A full datapact check">
+          <div class="term__bar">
+            <span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="term__title">datapact check</span>
+          </div>
+          <pre class="term__body term__body--wrap"><span class="ln"><span class="p">$ </span><span class="cmd">datapact check --contract contract.yaml --data data.csv</span></span><span class="ln"><span class="dim">data.csv  rows:5  errors:16  warnings:0  info:1</span></span><span class="ln"><span class="info">INFO</span><span class="dim">   DP-202  discount_code  column "discount_code" is not declared in the contract</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-208  orders.order_id  row 2: value "ORD-2" does not match pattern ^ORD-[0-9]{6}$</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-205  orders.order_id  row 4: duplicate value "ORD-000101" in unique column "order_id"</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-210  orders.customer_email  row 3: value "not-an-email" is not a valid email</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-204  orders.customer_email  row 4: required column "customer_email" is empty</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-209  orders.status  row 3: value "refunded" is not in the enum for "status"</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-203  orders.item_count  row 2: "three" is not a valid integer</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-206  orders.item_count  row 3: value "0" is below minimum 1</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-201  orders.is_gift  required column "is_gift" is missing from the dataset</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-203  orders.order_date  row 3: "2026-13-40" is not a valid date</span></span></pre>
+        </div>
+
+        <h2>Exit codes</h2>
+        <div class="table-wrap">
+          <table>
+            <caption>The exit code is the CI gate.</caption>
+            <thead>
+              <tr><th scope="col">Code</th><th scope="col">Meaning</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>0</code></td><td>No finding at or above <code>--fail-on</code>.</td></tr>
+              <tr><td><code>1</code></td><td>At least one finding at or above <code>--fail-on</code>.</td></tr>
+              <tr><td><code>2</code></td><td>Invalid usage, or input that could not be parsed (<code>DP-PARSE-000</code>).</td></tr>
+              <tr><td><code>3</code></td><td>I/O error: an input file could not be read, or a report could not be written.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>An unreadable or structurally invalid contract is never reported as clean: it produces a <code>DP-PARSE-000</code> error and exit code <code>2</code>, so a gate cannot pass on input the tool did not understand.</p>
+
+        <h2>JSON output</h2>
+        <p>With <code>--json</code>, the result is one stable document: the contract and dataset labels, the row count, the severity counts, and every finding with its <code>code</code>, <code>severity</code>, <code>location</code>, and <code>message</code>. Field order is stable, so a diff means a real change.</p>
+        <pre class="code"><code>{
+  "contract": "contract.yaml",
+  "dataset": "data.csv",
+  "rows": 5,
+  "counts": { "error": 16, "warning": 0, "info": 1 },
+  "issues": [
+    {
+      "code": "DP-208",
+      "severity": "error",
+      "location": "orders.order_id",
+      "message": "row 2: value \"ORD-2\" does not match pattern ^ORD-[0-9]{6}$"
+    }
+  ]
+}</code></pre>
+
+        <h2>Library</h2>
+        <p>The engine is exported for your own TypeScript, and it is browser-safe: no <code>node:</code> imports, so the same code runs in a page and in Bun. Parse once, then lint and validate.</p>
+        <pre class="code"><code>import { parseContract, parseCsv, lintContract, validateDataset } from "datapact";
+
+const contract = parseContract(contractSource);
+const dataset = parseCsv(csvSource);
+
+const issues = [...lintContract(contract), ...validateDataset(contract, dataset)];
+for (const issue of issues) {
+  console.log(issue.code, issue.severity, issue.message);
+}</code></pre>
+        <p>The high-level helpers wrap the same steps and return a <code>ValidationResult</code>, an object of <code>{ contract, dataset, rows, issues, counts }</code>.</p>
+        <pre class="code"><code>import { check, lintOnly, formatText, formatJson, toSarif, PARSE_ERROR_CODE } from "datapact";
+
+const result = check(contractSource, csvSource, {
+  contractName: "contract.yaml",
+  datasetName: "data.csv",
+});
+
+console.log(formatText(result));
+const document = JSON.parse(formatJson(result));
+const sarif = toSarif(result, "datapact", "0.1.0");
+
+const lint = lintOnly(contractSource, "contract.yaml");
+const parsed = result.issues.some((issue) =&gt; issue.code === PARSE_ERROR_CODE);</code></pre>
+
+        <h2>MCP server</h2>
+        <p><code>datapact mcp</code> speaks the Model Context Protocol over stdio, so an agent can lint and check without a shell. It exposes two tools: <code>contract_lint</code> takes the contract text (and an optional name) and returns the findings; <code>contract_check</code> additionally takes the CSV text, including its header row.</p>
+        <pre class="code"><code>{
+  "mcpServers": {
+    "datapact": {
+      "command": "bunx",
+      "args": ["github:srivtx/datapact#main", "mcp"]
+    }
+  }
+}</code></pre>
+        <div class="table-wrap">
+          <table>
+            <caption>The two MCP tools.</caption>
+            <thead>
+              <tr><th scope="col">Tool</th><th scope="col">Arguments</th><th scope="col">Returns</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>contract_lint</code></td><td><code>contract</code> (string, required), <code>name</code> (string, optional)</td><td>The lint findings as text.</td></tr>
+              <tr><td><code>contract_check</code></td><td><code>contract</code> (string, required), <code>csv</code> (string, required), <code>name</code> (string, optional)</td><td>The combined lint and validation findings as text.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="docs__foot">
+          <a href="rules.html">← Rules</a>
+          <a href="ci.html">CI →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <span class="brand__mark" aria-hidden="true">
+          <svg class="icon" viewBox="0 0 32 32" focusable="false">
+            <path d="M10 7h12v18H10z"></path>
+            <path d="M13.5 17.5l2.6 2.6 5.4-6"></path>
+          </svg>
+        </span>
+        <div>
+          <p>datapact</p>
+          <p class="muted">Offline data-contract runtime.</p>
+        </div>
+      </div>
+
+      <nav aria-label="Documentation">
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="rules.html">Rules</a></li>
+          <li><a href="usage.html">Usage</a></li>
+          <li><a href="ci.html">CI</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Project">
+        <h2>Project</h2>
+        <ul>
+          <li><a href="https://github.com/srivtx/datapact">Repository</a></li>
+          <li><a href="https://github.com/srivtx/datapact/blob/main/LICENSE">MIT license</a></li>
+          <li><a href="https://github.com/srivtx/datapact/issues">Issues</a></li>
+          <li><a href="https://srivtx.github.io/lenses">Lenses suite</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer__meta">
+      <p>by svx · MIT Licensed · © 2026.</p>
+      <a href="#top">Back to top</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>datapact — validate data against its contract, offline</title>
+<meta name="description" content="datapact parses an ODCS contract, lints it, and validates a CSV against it, in your browser or in CI. No warehouse connection, no upload.">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="datapact — validate data against its contract, offline">
+<meta property="og:description" content="Parse and lint an Open Data Contract Standard contract, then validate a CSV against it. Offline, no warehouse, text, JSON, or SARIF 2.1.0.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://srivtx.github.io/datapact">
+<meta property="og:image" content="https://srivtx.github.io/datapact/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="datapact — validate data against its contract, offline">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="datapact — validate data against its contract, offline">
+<meta name="twitter:description" content="Parse and lint an Open Data Contract Standard contract, then validate a CSV against it. Offline, no warehouse, text, JSON, or SARIF 2.1.0.">
+<meta name="twitter:image" content="https://srivtx.github.io/datapact/assets/og.png">
+<link rel="canonical" href="https://srivtx.github.io/datapact">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ea580c'/%3E%3Cpath d='M9 9h14v17H9z' fill='none' stroke='white' stroke-width='2.2'/%3E%3Cpath d='M12.5 17.5l2.6 2.6 5.4-6' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/lens.css">
+<link rel="stylesheet" href="assets/theme.css">
+<script>
+(function () {
+  try {
+    var stored = window.localStorage.getItem("datapact-theme");
+    if (stored === "dark" || stored === "light") {
+      document.documentElement.setAttribute("data-theme", stored);
+    }
+  } catch (err) {}
+  if (
+    "IntersectionObserver" in window &&
+    !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+  ) {
+    document.documentElement.classList.add("js");
+  }
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav" id="top">
+  <div class="container nav__inner">
+    <a class="brand" href="index.html" aria-label="datapact home">
+      <span class="brand__mark" aria-hidden="true">
+        <svg class="icon" viewBox="0 0 32 32" focusable="false">
+          <path d="M10 7h12v18H10z"></path>
+          <path d="M13.5 17.5l2.6 2.6 5.4-6"></path>
+        </svg>
+      </span>
+      <span class="brand__name">datapact</span>
+      <span class="brand__tag">offline data-contract runtime</span>
+    </a>
+
+    <nav class="nav__links" id="site-nav" aria-label="Sections">
+      <a href="#studio">Studio</a>
+      <a href="rules.html">Rules</a>
+      <a href="usage.html">Usage</a>
+      <a href="ci.html">CI</a>
+      <a href="https://github.com/srivtx/datapact">GitHub</a>
+    </nav>
+
+    <div class="nav__actions">
+      <button type="button" class="nav__toggle btn btn--ghost btn--sm" id="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+      </button>
+      <button type="button" class="btn btn--ghost btn--sm" id="theme-toggle" aria-pressed="false" aria-label="Switch to dark theme">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+        </svg>
+        <span id="theme-toggle-text">Theme</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero__glow" aria-hidden="true"></div>
+    <div class="container">
+      <div class="split">
+        <div class="split__copy">
+          <p class="eyebrow reveal">Offline · no warehouse · CI-ready</p>
+          <h1 id="hero-title" class="reveal">Validate data against its contract, offline.</h1>
+          <p class="hero__lede reveal">datapact parses an Open Data Contract Standard (ODCS) contract, lints it, and validates a CSV dataset against it. One command, no connection string, no upload. The contract is finally checked, not just filed.</p>
+
+          <div class="btn-row reveal">
+            <a class="btn btn--primary" href="#studio">
+              Try it in your browser
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6"></path></svg>
+            </a>
+            <a class="btn btn--outline" href="rules.html">Read the rules</a>
+          </div>
+
+          <div class="install reveal">
+            <code class="install__cmd">bunx github:srivtx/datapact#main check --contract contract.yaml --data data.csv</code>
+            <button type="button" class="btn btn--outline btn--sm" data-copy="bunx github:srivtx/datapact#main check --contract contract.yaml --data data.csv">Copy</button>
+          </div>
+          <p class="install__note reveal">datapact is not on npm; <code>bunx github:srivtx/datapact#main</code> runs the latest <code>main</code> with Bun. Install the <code>datapact</code> binary with the one-line script, or add it as a dev dependency.</p>
+        </div>
+
+        <div class="split__aside reveal">
+          <div class="term" aria-label="Example datapact run">
+            <div class="term__bar">
+              <span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="term__title">datapact check</span>
+            </div>
+            <pre class="term__body term__body--wrap"><span class="ln"><span class="p">$ </span><span class="cmd">datapact check --contract contract.yaml --data data.csv</span></span><span class="ln"><span class="dim">data.csv  rows:5  errors:16  warnings:0  info:1</span></span><span class="ln"><span class="info">INFO</span><span class="dim">   DP-202  discount_code  column "discount_code" is not declared in the contract</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-208  orders.order_id  row 2: value "ORD-2" does not match pattern ^ORD-[0-9]{6}$</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-205  orders.order_id  row 4: duplicate value "ORD-000101" in unique column "order_id"</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-210  orders.customer_email  row 3: value "not-an-email" is not a valid email</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-204  orders.customer_email  row 4: required column "customer_email" is empty</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-209  orders.status  row 3: value "refunded" is not in the enum for "status"</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-203  orders.item_count  row 2: "three" is not a valid integer</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-206  orders.item_count  row 3: value "0" is below minimum 1</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-201  orders.is_gift  required column "is_gift" is missing from the dataset</span></span><span class="ln"><span class="err">ERROR</span><span class="dim">  DP-203  orders.order_date  row 3: "2026-13-40" is not a valid date</span></span><span class="ln"><span class="dim">… and 7 more errors.</span></span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="studio" aria-labelledby="studio-title">
+    <div class="container">
+      <div class="band reveal">
+        <p class="band__label" id="studio-title">Try it in your browser</p>
+        <div class="band__body">
+          <p class="band__lead">Paste a contract and a CSV, then check one against the other. Both run in this tab; nothing is uploaded and there is no network call.</p>
+
+          <div class="playground">
+            <div class="playground__head">
+              <p class="playground__hint">Runs entirely in your browser. Nothing is uploaded.</p>
+            </div>
+
+            <div class="playground__body">
+              <div class="grid grid--2">
+                <div>
+                  <label class="field" for="contract-input">ODCS contract (YAML)</label>
+                  <textarea id="contract-input" class="input" spellcheck="false">name: orders
+schema:
+  - name: orders
+    properties:
+      - name: order_id
+        logicalType: string
+        required: true
+        unique: true
+        pattern: "^ORD-[0-9]{6}$"
+      - name: customer_email
+        logicalType: string
+        required: true
+        format: email
+      - name: status
+        logicalType: string
+        required: true
+        enum: [pending, paid, shipped, cancelled]
+      - name: item_count
+        logicalType: integer
+        required: true
+        minimum: 1
+        maximum: 1000
+      - name: is_gift
+        logicalType: boolean
+        required: true
+      - name: order_date
+        logicalType: date
+        required: true
+        format: date</textarea>
+                </div>
+                <div>
+                  <label class="field" for="data-input">CSV data</label>
+                  <textarea id="data-input" class="input" spellcheck="false">order_id,customer_email,status,item_count,order_date,discount_code
+ORD-000101,ada@example.com,paid,3,2026-01-05,WELCOME10
+ORD-2,ada@example.com,paid,three,2026-01-05,WELCOME10
+ORD-000103,not-an-email,refunded,0,2026-13-40,
+ORD-000101,,paid,5000,2026-02-01,</textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="playground__actions">
+              <button type="button" class="btn btn--primary" id="check-button">Check</button>
+              <button type="button" class="btn btn--outline" id="lint-button">Lint contract</button>
+              <p id="studio-status" class="status" role="status" aria-live="polite">Nothing checked yet.</p>
+            </div>
+
+            <div class="playground__results">
+              <div id="studio-error" class="callout" role="alert" hidden>
+                <p id="studio-error-text"></p>
+              </div>
+
+              <div id="studio-summary-wrap" hidden>
+                <div class="summary" id="studio-summary" aria-label="Finding counts"></div>
+              </div>
+
+              <pre id="studio-output" class="code code--wrap" hidden><code id="studio-output-code"></code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="catches" aria-labelledby="catches-title">
+    <div class="container">
+      <div class="band reveal">
+        <p class="band__label" id="catches-title">What it catches</p>
+        <div class="band__body">
+          <p class="band__lead">The ways a dataset drifts from the contract that describes it, each with a stable code you can look up.</p>
+          <dl class="defgrid">
+            <div>
+              <dt>A missing required column</dt>
+              <dd>When a column the contract marks <code>required</code> is absent from the CSV header, the run fails before a single row is read.</dd>
+            </div>
+            <div>
+              <dt>An undeclared column</dt>
+              <dd>Data that has grown a column nobody agreed to. Reported as <code>DP-202</code>, an informational finding rather than a failure.</dd>
+            </div>
+            <div>
+              <dt>A value of the wrong type</dt>
+              <dd>Text where the contract says <code>integer</code>, <code>number</code>, <code>boolean</code>, <code>date</code>, or <code>date-time</code>.</dd>
+            </div>
+            <div>
+              <dt>An empty required value</dt>
+              <dd>A required cell that is blank. Empty cells in optional columns are skipped, which is what lets a sparse column validate cleanly.</dd>
+            </div>
+            <div>
+              <dt>A broken uniqueness rule</dt>
+              <dd>A value that repeats in a column the contract marks <code>unique</code>, compared as exact, case-sensitive text.</dd>
+            </div>
+            <div>
+              <dt>Bounds, patterns, enums, formats</dt>
+              <dd>Numbers outside <code>minimum</code>/<code>maximum</code>, text that misses a <code>pattern</code>, values outside an <code>enum</code>, and values that fail a <code>format</code> such as <code>email</code>, <code>uuid</code>, <code>uri</code>, or <code>ipv4</code>.</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="start" aria-labelledby="start-title">
+    <div class="container">
+      <div class="band reveal">
+        <p class="band__label" id="start-title">Quick start</p>
+        <div class="band__body">
+          <p class="band__lead">Install once, then point it at a contract and a data file. The exit code is the CI gate.</p>
+          <div class="term" aria-label="Quick start commands">
+            <div class="term__bar">
+              <span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="term__title">quick start</span>
+            </div>
+            <pre class="term__body term__body--wrap"><span class="ln"><span class="dim"># install the binary</span></span><span class="ln"><span class="p">$ </span><span class="cmd">curl -fsSL https://raw.githubusercontent.com/srivtx/datapact/main/install.sh | sh</span></span><span class="ln"></span><span class="ln"><span class="dim"># lint a contract on its own</span></span><span class="ln"><span class="p">$ </span><span class="cmd">datapact lint --contract contract.yaml</span></span><span class="ln"></span><span class="ln"><span class="dim"># validate a dataset against it</span></span><span class="ln"><span class="p">$ </span><span class="cmd">datapact check --contract contract.yaml --data data.csv</span></span><span class="ln"></span><span class="ln"><span class="dim"># fail CI on warnings too, and write SARIF</span></span><span class="ln"><span class="p">$ </span><span class="cmd">datapact check --contract contract.yaml --data data.csv --fail-on warning --sarif datapact.sarif</span></span></pre>
+          </div>
+          <p>Every flag, the exit codes, the library API, and the MCP server are in <a href="usage.html">Usage</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="docs" aria-labelledby="docs-title">
+    <div class="container">
+      <div class="band reveal">
+        <p class="band__label" id="docs-title">Documentation</p>
+        <div class="band__body">
+          <p class="band__lead">The landing page is the pitch. The details live on four short pages.</p>
+          <dl class="defgrid">
+            <div>
+              <dt><a href="rules.html">Rules</a></dt>
+              <dd>Every lint and validation code, the logical types, the formats, and the empty-value rule.</dd>
+            </div>
+            <div>
+              <dt><a href="usage.html">Usage</a></dt>
+              <dd>The CLI commands, exit codes, JSON output, the browser-safe library API, and the MCP server.</dd>
+            </div>
+            <div>
+              <dt><a href="ci.html">CI</a></dt>
+              <dd>SARIF 2.1.0 and GitHub code scanning, with a workflow you can paste.</dd>
+            </div>
+            <div>
+              <dt><a href="faq.html">FAQ</a></dt>
+              <dd>Scope, honest limits, CSV parsing, and how datapact relates to ODCS.</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <span class="brand__mark" aria-hidden="true">
+          <svg class="icon" viewBox="0 0 32 32" focusable="false">
+            <path d="M10 7h12v18H10z"></path>
+            <path d="M13.5 17.5l2.6 2.6 5.4-6"></path>
+          </svg>
+        </span>
+        <div>
+          <p>datapact</p>
+          <p class="muted">Offline data-contract runtime.</p>
+        </div>
+      </div>
+
+      <nav aria-label="Documentation">
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="rules.html">Rules</a></li>
+          <li><a href="usage.html">Usage</a></li>
+          <li><a href="ci.html">CI</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Project">
+        <h2>Project</h2>
+        <ul>
+          <li><a href="https://github.com/srivtx/datapact">Repository</a></li>
+          <li><a href="https://github.com/srivtx/datapact/blob/main/LICENSE">MIT license</a></li>
+          <li><a href="https://github.com/srivtx/datapact/issues">Issues</a></li>
+          <li><a href="https://srivtx.github.io/lenses">Lenses suite</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer__meta">
+      <p>by svx · MIT Licensed · © 2026.</p>
+      <a href="#top">Back to top</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/studio.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var api = window.DataPact;
+  var contractInput = document.getElementById("contract-input");
+  var dataInput = document.getElementById("data-input");
+  var checkButton = document.getElementById("check-button");
+  var lintButton = document.getElementById("lint-button");
+  var status = document.getElementById("studio-status");
+  var errorBox = document.getElementById("studio-error");
+  var errorText = document.getElementById("studio-error-text");
+  var summaryWrap = document.getElementById("studio-summary-wrap");
+  var summary = document.getElementById("studio-summary");
+  var output = document.getElementById("studio-output");
+  var outputCode = document.getElementById("studio-output-code");
+
+  function clear(node) {
+    while (node.firstChild) node.removeChild(node.firstChild);
+  }
+
+  function chip(label, modifier) {
+    var el = document.createElement("span");
+    el.className = modifier ? "chip " + modifier : "chip";
+    el.textContent = label;
+    return el;
+  }
+
+  function messageOf(error) {
+    return error && error.message ? error.message : String(error);
+  }
+
+  function showError(message) {
+    errorText.textContent = message;
+    errorBox.hidden = false;
+    status.setAttribute("data-tone", "error");
+    status.textContent = message;
+  }
+
+  function render(result, kind) {
+    var parseCode = api && api.PARSE_ERROR_CODE ? api.PARSE_ERROR_CODE : "DP-PARSE-000";
+    var isParse = (result.issues || []).some(function (issue) {
+      return issue.code === parseCode;
+    });
+
+    var counts = result.counts || { error: 0, warning: 0, info: 0 };
+    clear(summary);
+    summary.appendChild(chip("errors " + (counts.error || 0), "chip--error"));
+    summary.appendChild(chip("warnings " + (counts.warning || 0), "chip--warning"));
+    summary.appendChild(chip("info " + (counts.info || 0), "chip--info"));
+    summaryWrap.hidden = false;
+
+    outputCode.textContent = api.formatText(result);
+    output.hidden = false;
+
+    if (isParse) {
+      var first = (result.issues || [])[0];
+      showError(first && first.message ? first.message : "The input could not be parsed.");
+      return;
+    }
+
+    errorBox.hidden = true;
+    status.removeAttribute("data-tone");
+    var prefix = kind === "lint" ? "Lint" : result.contract + " vs " + result.dataset;
+    status.textContent =
+      prefix + ": " + (counts.error || 0) + " errors, " +
+      (counts.warning || 0) + " warnings, " + (counts.info || 0) + " info.";
+  }
+
+  function run(kind) {
+    if (!api || typeof api.check !== "function") {
+      showError("The datapact studio bundle did not load.");
+      return;
+    }
+    try {
+      var result =
+        kind === "lint"
+          ? api.lintOnly(contractInput.value, "contract.yaml")
+          : api.check(contractInput.value, dataInput.value, {
+              contractName: "contract.yaml",
+              datasetName: "data.csv",
+            });
+      render(result, kind);
+    } catch (error) {
+      showError("Could not run: " + messageOf(error));
+    }
+  }
+
+  if (checkButton) checkButton.addEventListener("click", function () { run("check"); });
+  if (lintButton) lintButton.addEventListener("click", function () { run("lint"); });
+})();
+</script>
+<script src="assets/site.js" defer></script>
+</body>
+</html>
