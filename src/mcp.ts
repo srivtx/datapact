@@ -139,4 +139,15 @@ export async function serve(options: { version: string }): Promise<void> {
       }
     }
   }
+  const tail = buffer.trim();
+  if (tail.length > 0) {
+    try {
+      const message = JSON.parse(tail) as unknown;
+      if (typeof message === "object" && message !== null) {
+        await handle(message as Record<string, unknown>, options.version);
+      }
+    } catch {
+      /* ignore a trailing partial line */
+    }
+  }
 }
